@@ -53,11 +53,11 @@ export default function Day({ daynumber }: { daynumber: number }) {
     if (daynumber === 7) {
       return 'Vecka 1 avklarad!';
     } else if (daynumber === 22) {
-      return 'Bra jobbat!';
+      return 'En tredjedel avklarad!';
     } else if (daynumber === 33) {
       return 'Halvvägs!';
     } else if (daynumber === 44) {
-      return 'Fortsätt kämpa!';
+      return 'Två tredejedelar avklarade!';
     } else if (daynumber === 66) {
       return 'Du klarade det!';
     }
@@ -67,11 +67,11 @@ export default function Day({ daynumber }: { daynumber: number }) {
     if (daynumber === 7) {
       return 'Du är fantastisk! Kämpa vidare så kommer det gå bra det här!';
     } else if (daynumber === 22) {
-      return 'Du har nu gjort en tredjedel av resan! Rutinerna börjar sätta sig och du är på god väg mot ditt mål. Fortsätt kämpa!';
+      return 'Grymt jobbat! Du har nu gjort en tredjedel av resan! Rutinerna börjar sätta sig och du är på god väg mot ditt mål. Fortsätt kämpa!';
     } else if (daynumber === 33) {
       return 'Halvägs, var stolt över dig själv! Du har kommit långt och det är dags att fortsätta kämpa mot målet. Du klarar det här!';
     } else if (daynumber === 44) {
-      return 'Två tredjedelar avklarade. Det kan kännas lite jobbigt eller så flyter det på lättare än du trott. Hur som helst, Fortsätt kämpa!';
+      return 'Det kan kännas lite jobbigt eller så flyter det på lättare än du trott. Hur som helst, Fortsätt kämpa!';
     } else if (daynumber === 66) {
       return 'Du är i mål! Fantastiskt jobbat! Du har genomfört hela 66 dagar av träning och utmaningar. Du är en riktig kämpe och har visat att du kan nå dina mål. Njut av din prestation!';
     }
