@@ -95,7 +95,7 @@ export default function Day({ daynumber }: { daynumber: number }) {
         <Box
           className={`w-20 h-20 rounded-full flex justify-center items-center text-4xl ${getBackgroundColor()} ${disabledDay() ? 'text-gray-400 cursor-not-allowed' : 'text-pink-900'}`}
         >
-          {daynumber} hej
+          {daynumber}
         </Box>
         <Box>
           <Tooltip title="Dagliga">
