@@ -2,11 +2,6 @@
 
 import { Button, Modal, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
-import { ConfettiButton } from './magicui/confetti';
-import dayjs from 'dayjs';
-import { start } from 'repl';
-import confetti from 'canvas-confetti';
 
 export default function StartOver({
   show,
