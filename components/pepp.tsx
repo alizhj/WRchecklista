@@ -12,8 +12,8 @@ export default function Pepp({
   title,
   message,
 }: {
-  title: string;
-  message: string;
+  title: string | undefined;
+  message: string | undefined;
 }) {
   const [open, setOpen] = useState(false);
   const style = {
