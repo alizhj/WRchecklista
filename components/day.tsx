@@ -9,7 +9,6 @@ import { Modal, Tooltip } from '@mui/material';
 import { ConfettiButton } from './magicui/confetti';
 import dayjs from 'dayjs';
 import Pepp from './pepp';
-import { get } from 'http';
 
 export default function Day({ daynumber }: { daynumber: number }) {
   const [dagliga, setDagliga] = useState(false);
@@ -80,8 +79,8 @@ export default function Day({ daynumber }: { daynumber: number }) {
   // Hämta datum från localStorage
   const disabledDay = () => {
     const savedDateString = localStorage.getItem('startDatum');
-    const startDate = dayjs(savedDateString);
-    const today = dayjs();
+    const startDate = dayjs(savedDateString).startOf('day');
+    const today = dayjs().startOf('day');
 
     const daysSinceStart = today.diff(startDate, 'day') + 1;
 
@@ -93,15 +92,17 @@ export default function Day({ daynumber }: { daynumber: number }) {
     <>
       <Box className="flex items-center justify-center flex-col p-1">
         <Box
-          className={`w-20 h-20 rounded-full flex justify-center items-center text-4xl ${getBackgroundColor()} ${disabledDay() ? 'text-gray-400 cursor-not-allowed' : 'text-pink-900'}`}
+          className={`w-12 h-12 mb-2 rounded-full flex justify-center items-center text-3xl md:text-4xl ${getBackgroundColor()} ${disabledDay() ? 'text-gray-400 cursor-not-allowed' : 'text-pink-900'} md:w-20 md:h-20`}
         >
           {daynumber}
         </Box>
         <Box>
           <Tooltip title="Dagliga">
             <BackHandIcon
-              fontSize="large"
-              className={` ${dagliga ? 'text-pink-900 cursor-pointer hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+              sx={{
+                fontSize: { xs: '1.5rem', md: '1.8rem' },
+              }}
+              className={`${dagliga ? 'text-pink-900 cursor-pointer hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
               onClick={
                 disabledDay()
                   ? undefined
@@ -120,7 +121,9 @@ export default function Day({ daynumber }: { daynumber: number }) {
 
           <Tooltip title="Magträning">
             <FitnessCenterIcon
-              fontSize="large"
+              sx={{
+                fontSize: { xs: '1.6rem', md: '2rem' },
+              }}
               className={`${mage ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
               onClick={
                 disabledDay()
@@ -141,7 +144,9 @@ export default function Day({ daynumber }: { daynumber: number }) {
           {utmaning || disabledDay() ? (
             <Tooltip title="Utmaning">
               <EmojiEventsIcon
-                fontSize="large"
+                sx={{
+                  fontSize: { xs: '1.7rem', md: '2rem' },
+                }}
                 className={`${utmaning ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
                 onClick={
                   disabledDay()
@@ -162,7 +167,9 @@ export default function Day({ daynumber }: { daynumber: number }) {
             <Tooltip title="Utmaning">
               <ConfettiButton variant="ghost">
                 <EmojiEventsIcon
-                  fontSize="large"
+                  sx={{
+                    fontSize: { xs: '1.7rem', md: '2rem' },
+                  }}
                   className={`${utmaning ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
                   onClick={
                     disabledDay()
