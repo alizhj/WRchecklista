@@ -5,10 +5,11 @@ import BackHandIcon from '@mui/icons-material/BackHand';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import { useEffect, useState } from 'react';
-import { Modal, Tooltip } from '@mui/material';
+import { IconButton, Modal, Tooltip } from '@mui/material';
 import { ConfettiButton } from './magicui/confetti';
 import dayjs from 'dayjs';
 import Pepp from './pepp';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function Day({ daynumber }: { daynumber: number }) {
   const [dagliga, setDagliga] = useState(false);
@@ -37,42 +38,98 @@ export default function Day({ daynumber }: { daynumber: number }) {
   };
 
   const handlePepp = () => {
-    if (
-      daynumber === 7 ||
-      daynumber === 22 ||
-      daynumber === 33 ||
-      daynumber === 44 ||
-      daynumber === 66
-    ) {
-      setShowPepp(true);
+    const program = localStorage.getItem('program');
+    if (program === '66') {
+      if (
+        (daynumber === 7 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 22 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 33 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 44 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 66 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga')
+      ) {
+        setShowPepp(true);
+      }
+    }
+    if (program === '33') {
+      if (
+        (daynumber === 7 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 11 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 17 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 22 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
+        (daynumber === 33 &&
+          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga')
+      ) {
+        setShowPepp(true);
+      }
     }
   };
 
   const getPeppTitle = () => {
-    if (daynumber === 7) {
-      return 'Vecka 1 avklarad!';
-    } else if (daynumber === 22) {
-      return 'En tredjedel avklarad!';
-    } else if (daynumber === 33) {
-      return 'Halvvägs!';
-    } else if (daynumber === 44) {
-      return 'Två tredejedelar avklarade!';
-    } else if (daynumber === 66) {
-      return 'Du klarade det!';
+    const program = localStorage.getItem('program');
+    if (program === '66') {
+      if (daynumber === 7) {
+        return 'Vecka 1 avklarad!';
+      } else if (daynumber === 22) {
+        return 'En tredjedel avklarad!';
+      } else if (daynumber === 33) {
+        return 'Halvvägs!';
+      } else if (daynumber === 44) {
+        return 'Två tredejedelar avklarade!';
+      } else if (daynumber === 66) {
+        return 'Du klarade det!';
+      }
+    }
+    if (program === '33') {
+      if (daynumber === 7) {
+        return 'Vecka 1 avklarad!';
+      } else if (daynumber === 11) {
+        return 'En tredjedel avklarad!';
+      } else if (daynumber === 17) {
+        return 'Halvvägs!';
+      } else if (daynumber === 22) {
+        return 'Två tredejedelar avklarade!';
+      } else if (daynumber === 33) {
+        return 'Du klarade det!';
+      }
     }
   };
 
   const getPeppMessage = () => {
-    if (daynumber === 7) {
-      return 'Du är fantastisk! Kämpa vidare så kommer det gå bra det här!';
-    } else if (daynumber === 22) {
-      return 'Grymt jobbat! Du har nu gjort en tredjedel av resan! Rutinerna börjar sätta sig och du är på god väg mot ditt mål. Fortsätt kämpa!';
-    } else if (daynumber === 33) {
-      return 'Halvägs, var stolt över dig själv! Du har kommit långt och det är dags att fortsätta kämpa mot målet. Du klarar det här!';
-    } else if (daynumber === 44) {
-      return 'Det kan kännas lite jobbigt eller så flyter det på lättare än du trott. Hur som helst, Fortsätt kämpa!';
-    } else if (daynumber === 66) {
-      return 'Du är i mål! Fantastiskt jobbat! Du har genomfört hela 66 dagar av träning och utmaningar. Du är en riktig kämpe och har visat att du kan nå dina mål. Njut av din prestation!';
+    const program = localStorage.getItem('program');
+    if (program === '66') {
+      if (daynumber === 7) {
+        return 'Du är fantastisk! Kämpa vidare så kommer det gå bra det här!';
+      } else if (daynumber === 22) {
+        return 'Grymt jobbat! Du har nu gjort en tredjedel av resan! Rutinerna börjar sätta sig och du är på god väg mot ditt mål. Fortsätt kämpa!';
+      } else if (daynumber === 33) {
+        return 'Halvägs, var stolt över dig själv! Du har kommit långt och det är dags att fortsätta kämpa mot målet. Du klarar det här!';
+      } else if (daynumber === 44) {
+        return 'Det kan kännas lite jobbigt eller så flyter det på lättare än du trott. Hur som helst, Fortsätt kämpa!';
+      } else if (daynumber === 66) {
+        return 'Du är i mål! Fantastiskt jobbat! Du har genomfört hela 66 dagar av träning och utmaningar. Du är en riktig kämpe och har visat att du kan nå dina mål. Njut av din prestation!';
+      }
+    }
+    if (program === '33') {
+      if (daynumber === 7) {
+        return 'Du är fantastisk! Kämpa vidare så kommer det gå bra det här!';
+      } else if (daynumber === 11) {
+        return 'Grymt jobbat! Du har nu gjort en tredjedel av resan! Rutinerna börjar sätta sig och du är på god väg mot ditt mål. Fortsätt kämpa!';
+      } else if (daynumber === 17) {
+        return 'Halvägs, var stolt över dig själv! Du har kommit långt och det är dags att fortsätta kämpa mot målet. Du klarar det här!';
+      } else if (daynumber === 22) {
+        return 'Det kan kännas lite jobbigt eller så flyter det på lättare än du trott. Hur som helst, Fortsätt kämpa!';
+      } else if (daynumber === 33) {
+        return 'Du är i mål! Fantastiskt jobbat! Du har genomfört hela 66 dagar av träning och utmaningar. Du är en riktig kämpe och har visat att du kan nå dina mål. Njut av din prestation!';
+      }
     }
   };
 
@@ -117,6 +174,7 @@ export default function Day({ daynumber }: { daynumber: number }) {
                             `${daynumber}-dagliga`,
                             'dagliga'
                           );
+                      handlePepp();
                     }
               }
             />
@@ -138,7 +196,6 @@ export default function Day({ daynumber }: { daynumber: number }) {
                         localStorage.removeItem(`${daynumber}-mage`);
                       } else {
                         localStorage.setItem(`${daynumber}-mage`, 'mage');
-                        handlePepp();
                       }
                     }
               }
@@ -199,7 +256,11 @@ export default function Day({ daynumber }: { daynumber: number }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Pepp title={getPeppTitle()} message={getPeppMessage()} />
+        <Pepp
+          title={getPeppTitle()}
+          message={getPeppMessage()}
+          onClose={() => setShowPepp(false)}
+        />
       </Modal>
     </>
   );

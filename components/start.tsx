@@ -91,7 +91,7 @@ export default function Start({ onStart }: { onStart: () => void }) {
         </Typography>
         <Typography id="modal-modal-description" variant="h6" sx={{ mt: 2 }}>
           Nu jävlar kör vi! <br />
-          Välj vilket program du vill köra?
+          Välj vilket program du vill köra
         </Typography>
 
         <FormControl className="flex items-center mt-2">

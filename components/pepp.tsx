@@ -1,19 +1,22 @@
 'use client';
 
-import { Button, Modal, Typography } from '@mui/material';
+import { Button, IconButton, Modal, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { ConfettiButton } from './magicui/confetti';
 import dayjs from 'dayjs';
 import { start } from 'repl';
 import confetti from 'canvas-confetti';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function Pepp({
   title,
   message,
+  onClose,
 }: {
   title: string | undefined;
   message: string | undefined;
+  onClose: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const style = {
@@ -64,10 +67,22 @@ export default function Pepp({
 
   return (
     <Box sx={style}>
+      <IconButton
+        aria-label="close"
+        onClick={() => onClose()}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: 'black',
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
       <Typography id="modal-modal-title" variant="h4" component="h2">
         {title}
       </Typography>
-      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+      <Typography id="modal-modal-description" variant="h6" sx={{ mt: 2 }}>
         {message}
       </Typography>
     </Box>
