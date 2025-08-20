@@ -107,7 +107,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="h-screen flex flex-col items-center pt-4 pb-4 text-pink-900 bg-pink-200">
+    <main className="h-screen flex flex-col md:items-center pt-4 pb-4 text-pink-900 bg-pink-200">
       <Button
         variant="contained"
         sx={{
@@ -130,10 +130,8 @@ export default function Home() {
       >
         <RestoreIcon /> <span className="button-text">Börja om</span>
       </Button>
-      <Box className="flex flex-col items-center text-4xl mb-1 md:mb-6 flex-shrink-0">
-        <h1 className="text-md mt-12 md:text-8xl md:mt-0 font-bold">
-          Weekly Revolt
-        </h1>
+      <Box className="flex flex-col md:items-center text-4xl mb-1 md:mb-6 mr-2 ml-4 md:ml-0 flex-shrink-0">
+        <h1 className="text-md md:text-8xl md:mt-0 font-bold">Weekly Revolt</h1>
       </Box>
       {started && (
         <Box
