@@ -90,7 +90,10 @@ export default function Day({ daynumber }: { daynumber: number }) {
 
   return (
     <>
-      <Box className="flex items-center justify-center flex-col p-1">
+      <Box
+        className="flex items-center justify-center flex-col p-1"
+        data-day={daynumber} // Lägg till detta för scroll-funktionalitet
+      >
         <Box
           className={`w-12 h-12 mb-2 rounded-full flex justify-center items-center text-3xl md:text-4xl ${getBackgroundColor()} ${disabledDay() ? 'text-gray-400 cursor-not-allowed' : 'text-pink-900'} md:w-20 md:h-20`}
         >
