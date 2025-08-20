@@ -5,7 +5,7 @@ import BackHandIcon from '@mui/icons-material/BackHand';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import { useEffect, useState } from 'react';
-import { IconButton, Modal, Tooltip } from '@mui/material';
+import { IconButton, Modal, Tooltip, Typography } from '@mui/material';
 import { ConfettiButton } from './magicui/confetti';
 import dayjs from 'dayjs';
 import Pepp from './pepp';
@@ -39,35 +39,18 @@ export default function Day({ daynumber }: { daynumber: number }) {
 
   const handlePepp = () => {
     const program = localStorage.getItem('program');
-    if (program === '66') {
-      if (
-        (daynumber === 7 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 22 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 33 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 44 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 66 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga')
-      ) {
-        setShowPepp(true);
-      }
-    }
-    if (program === '33') {
-      if (
-        (daynumber === 7 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 11 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 17 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 22 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga') ||
-        (daynumber === 33 &&
-          localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga')
-      ) {
+    const peppDays = {
+      '66': [7, 22, 33, 44, 66],
+      '33': [7, 11, 17, 22, 33],
+    };
+
+    // Kontrollera om aktuellt program finns och om daynumber är en pepp-dag
+    const validDays = peppDays[program];
+
+    if (validDays && validDays.includes(daynumber)) {
+      const hasDagliga =
+        localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga';
+      if (hasDagliga) {
         setShowPepp(true);
       }
     }
@@ -156,76 +139,64 @@ export default function Day({ daynumber }: { daynumber: number }) {
         >
           {daynumber}
         </Box>
-        <Box>
+        <Box className={'flex items-center flex-col md:flex-row'}>
           <Tooltip title="Dagliga">
-            <BackHandIcon
-              sx={{
-                fontSize: { xs: '1.5rem', md: '1.8rem' },
-              }}
-              className={`${dagliga ? 'text-pink-900 cursor-pointer hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
-              onClick={
-                disabledDay()
-                  ? undefined
-                  : () => {
-                      setDagliga(!dagliga);
-                      dagliga
-                        ? localStorage.removeItem(`${daynumber}-dagliga`)
-                        : localStorage.setItem(
-                            `${daynumber}-dagliga`,
-                            'dagliga'
-                          );
-                      handlePepp();
-                    }
-              }
-            />
-          </Tooltip>
-
-          <Tooltip title="Magträning">
-            <FitnessCenterIcon
-              sx={{
-                fontSize: { xs: '1.6rem', md: '2rem' },
-              }}
-              className={`${mage ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
-              onClick={
-                disabledDay()
-                  ? undefined
-                  : () => {
-                      setMage(!mage);
-
-                      if (mage) {
-                        localStorage.removeItem(`${daynumber}-mage`);
-                      } else {
-                        localStorage.setItem(`${daynumber}-mage`, 'mage');
-                      }
-                    }
-              }
-            />
-          </Tooltip>
-          {utmaning || disabledDay() ? (
-            <Tooltip title="Utmaning">
-              <EmojiEventsIcon
+            <>
+              <BackHandIcon
                 sx={{
-                  fontSize: { xs: '1.7rem', md: '2rem' },
+                  fontSize: { xs: '1.5rem', md: '1.8rem' },
                 }}
-                className={`${utmaning ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+                className={`${dagliga ? 'text-pink-900 cursor-pointer hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
                 onClick={
                   disabledDay()
                     ? undefined
                     : () => {
-                        setUtmaning(!utmaning);
-                        utmaning
-                          ? localStorage.removeItem(`${daynumber}-utmaning`)
+                        setDagliga(!dagliga);
+                        dagliga
+                          ? localStorage.removeItem(`${daynumber}-dagliga`)
                           : localStorage.setItem(
-                              `${daynumber}-utmaning`,
-                              'utmaning'
+                              `${daynumber}-dagliga`,
+                              'dagliga'
                             );
+                        handlePepp();
                       }
                 }
               />
-            </Tooltip>
-          ) : (
+              <Typography variant="body2" className="text-gray-300 md:hidden">
+                Dagliga
+              </Typography>
+            </>
+          </Tooltip>
+
+          <Tooltip title="Magträning">
+            <>
+              <FitnessCenterIcon
+                sx={{
+                  fontSize: { xs: '1.6rem', md: '2rem' },
+                }}
+                className={`${mage ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+                onClick={
+                  disabledDay()
+                    ? undefined
+                    : () => {
+                        setMage(!mage);
+
+                        if (mage) {
+                          localStorage.removeItem(`${daynumber}-mage`);
+                        } else {
+                          localStorage.setItem(`${daynumber}-mage`, 'mage');
+                        }
+                      }
+                }
+              />{' '}
+              <Typography variant="body2" className="text-gray-300 md:hidden">
+                Mage
+              </Typography>
+            </>
+          </Tooltip>
+          {utmaning || disabledDay() ? (
             <Tooltip title="Utmaning">
-              <ConfettiButton variant="ghost">
+              <>
                 <EmojiEventsIcon
                   sx={{
                     fontSize: { xs: '1.7rem', md: '2rem' },
@@ -240,12 +211,44 @@ export default function Day({ daynumber }: { daynumber: number }) {
                             ? localStorage.removeItem(`${daynumber}-utmaning`)
                             : localStorage.setItem(
                                 `${daynumber}-utmaning`,
-                                utmaning ? '' : 'utmaning'
+                                'utmaning'
                               );
                         }
                   }
-                />
-              </ConfettiButton>
+                />{' '}
+                <Typography variant="body2" className="text-gray-300 md:hidden">
+                  Utmaning
+                </Typography>
+              </>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Utmaning">
+              <>
+                <ConfettiButton variant="ghost">
+                  <EmojiEventsIcon
+                    sx={{
+                      fontSize: { xs: '1.7rem', md: '2rem' },
+                    }}
+                    className={`${utmaning ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+                    onClick={
+                      disabledDay()
+                        ? undefined
+                        : () => {
+                            setUtmaning(!utmaning);
+                            utmaning
+                              ? localStorage.removeItem(`${daynumber}-utmaning`)
+                              : localStorage.setItem(
+                                  `${daynumber}-utmaning`,
+                                  utmaning ? '' : 'utmaning'
+                                );
+                          }
+                    }
+                  />
+                </ConfettiButton>
+                <Typography variant="body2" className="text-gray-300 md:hidden">
+                  Utmaning
+                </Typography>
+              </>
             </Tooltip>
           )}
         </Box>
