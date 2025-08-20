@@ -15,7 +15,7 @@ export default function StartOver({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: { xs: 300, md: 400 },
     bgcolor: '#ffbde1',
     border: '2px solid #600336',
     borderRadius: '16px',
@@ -38,7 +38,7 @@ export default function StartOver({
         <Typography id="modal-modal-title" variant="h4" component="h2">
           Säkert?
         </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        <Typography id="modal-modal-description" variant="h6" sx={{ mt: 2 }}>
           Är du säker på att du vill börja om? <br />
         </Typography>
         <Button
@@ -57,7 +57,7 @@ export default function StartOver({
             onClose();
           }}
         >
-          Starta om Weekly Revolt
+          Ja, börja om
         </Button>
         <Button
           variant="contained"
@@ -71,7 +71,7 @@ export default function StartOver({
           }}
           onClick={onClose}
         >
-          Nej, jag vill inte börja om
+          Nej, jag kämpar på
         </Button>
       </Box>
     </Modal>

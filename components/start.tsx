@@ -1,6 +1,15 @@
 'use client';
 
-import { Button, Modal, Typography } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Modal,
+  Radio,
+  RadioGroup,
+  Typography,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { ConfettiButton } from './magicui/confetti';
@@ -10,12 +19,13 @@ import confetti from 'canvas-confetti';
 
 export default function Start({ onStart }: { onStart: () => void }) {
   const [open, setOpen] = useState(false);
+  const [program, setProgram] = useState<number | null>(null);
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: { xs: 300, md: 400 },
     bgcolor: '#ffbde1',
     border: '2px solid #600336',
     borderRadius: '16px',
@@ -30,6 +40,12 @@ export default function Start({ onStart }: { onStart: () => void }) {
     const sparatDatum = localStorage.getItem('startDatum');
     sparatDatum ? setOpen(false) : setOpen(true);
   }, []);
+
+  const handleProgramChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const program = event.target.value;
+    localStorage.setItem('program', program);
+    setProgram(parseInt(program));
+  };
 
   const handleStart = () => {
     const datum = dayjs();
@@ -73,12 +89,58 @@ export default function Start({ onStart }: { onStart: () => void }) {
         <Typography id="modal-modal-title" variant="h4" component="h2">
           Redo?
         </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        <Typography id="modal-modal-description" variant="h6" sx={{ mt: 2 }}>
           Nu jävlar kör vi! <br />
-          Klicka på knappen för att starta.
+          Välj vilket program du vill köra?
         </Typography>
+
+        <FormControl className="flex items-center mt-2">
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue=""
+            name="radio-buttons-group"
+            onChange={handleProgramChange}
+          >
+            <FormControlLabel
+              value="33"
+              control={
+                <Radio
+                  sx={{
+                    '&.Mui-checked': {
+                      color: '#600336',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  33 dagar
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              value="66"
+              control={
+                <Radio
+                  sx={{
+                    '&.Mui-checked': {
+                      color: '#600336',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  66 dagar
+                </Typography>
+              }
+            />
+          </RadioGroup>
+        </FormControl>
+
         <Button
           variant="contained"
+          disabled={program === null}
           sx={{
             background: '#600336',
             borderRadius: '50px',

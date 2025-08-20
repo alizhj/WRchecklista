@@ -10,13 +10,19 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import dayjs from 'dayjs';
 
 export default function Home() {
-  const days = 66;
   const [started, setStarted] = useState(false);
   const [startOver, setStartOver] = useState(false);
+  const [programDays, setProgramDays] = useState(66); // Default fallback
+
+  const getProgramDays = () => {
+    const savedProgram = localStorage.getItem('program');
+    return savedProgram ? parseInt(savedProgram) : 66;
+  };
 
   const getNumberedDays = () => {
+    const currentProgramDays = getProgramDays();
     let content = [];
-    for (let i = 1; i <= 66; i++) {
+    for (let i = 1; i <= currentProgramDays; i++) {
       const item = i;
       content.push(<Day key={item} daynumber={item} />);
     }
@@ -27,12 +33,13 @@ export default function Home() {
     const savedDateString = localStorage.getItem('startDatum');
     if (!savedDateString) return 1;
 
+    const currentProgramDays = getProgramDays();
     const startDate = dayjs(savedDateString).startOf('day');
     const today = dayjs().startOf('day');
     const daysSinceStart = today.diff(startDate, 'day') + 1;
 
-    // Begränsa till mellan 1 och 66
-    return Math.max(1, Math.min(daysSinceStart, 66));
+    // Begränsa till mellan 1 och currentProgramDays
+    return Math.max(1, Math.min(daysSinceStart, currentProgramDays));
   };
 
   const scrollToCurrentDay = () => {
@@ -46,15 +53,15 @@ export default function Home() {
       if (container && dayElement) {
         // Eftersom containern nu använder CSS Grid, behöver vi beräkna annorlunda
         const containerHeight = container.clientHeight;
-        const dayElementTop = (dayElement as HTMLElement).offsetTop; // Cast to HTMLElement
-        const dayElementHeight = (dayElement as HTMLElement).offsetHeight; // Cast to HTMLElement
+        const dayElementTop = (dayElement as HTMLElement).offsetTop;
+        const dayElementHeight = (dayElement as HTMLElement).offsetHeight;
 
         // Centrera elementet i containern
         const scrollTop =
           dayElementTop - containerHeight / 2 + dayElementHeight / 2;
 
         container.scrollTo({
-          top: Math.max(0, scrollTop), // Se till att vi inte scrollar till negativa värden
+          top: Math.max(0, scrollTop),
           behavior: 'smooth',
         });
       }
@@ -63,13 +70,40 @@ export default function Home() {
 
   useEffect(() => {
     const hasStarted = localStorage.getItem('startDatum') !== null;
+    const savedProgram = localStorage.getItem('program');
+
+    // Sätt antal dagar från localStorage, fallback till 66
+    if (savedProgram) {
+      setProgramDays(parseInt(savedProgram));
+    }
+
     setStarted(hasStarted);
 
     // Om redan startad, skrolla till aktuellt datum
     if (hasStarted) {
       scrollToCurrentDay();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Lyssna på localStorage ändringar för att uppdatera när program ändras
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedProgram = localStorage.getItem('program');
+      if (savedProgram) {
+        setProgramDays(parseInt(savedProgram));
+      }
+    };
+
+    // Lyssna på storage events (fungerar mellan tabs)
+    window.addEventListener('storage', handleStorageChange);
+
+    // Lyssna på custom event för samma tab
+    window.addEventListener('programUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('programUpdated', handleStorageChange);
+    };
   }, []);
 
   return (
