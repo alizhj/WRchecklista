@@ -69,6 +69,7 @@ export default function Home() {
     if (hasStarted) {
       scrollToCurrentDay();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
