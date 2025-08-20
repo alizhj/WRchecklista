@@ -36,18 +36,15 @@ export default function Day({ daynumber }: { daynumber: number }) {
       return 'bg-gray-200';
     }
   };
-
   const handlePepp = () => {
     const program = localStorage.getItem('program');
-    const peppDays = {
+    const peppDays: Record<string, number[]> = {
       '66': [7, 22, 33, 44, 66],
       '33': [7, 11, 17, 22, 33],
     };
 
     // Kontrollera om aktuellt program finns och om daynumber är en pepp-dag
-    const validDays = peppDays[program];
-
-    if (validDays && validDays.includes(daynumber)) {
+    if (program && peppDays[program]?.includes(daynumber)) {
       const hasDagliga =
         localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga';
       if (hasDagliga) {
