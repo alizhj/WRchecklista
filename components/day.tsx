@@ -9,12 +9,13 @@ import { IconButton, Modal, Tooltip, Typography } from '@mui/material';
 import { ConfettiButton } from './magicui/confetti';
 import dayjs from 'dayjs';
 import Pepp from './pepp';
-import CloseIcon from '@mui/icons-material/Close';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 export default function Day({ daynumber }: { daynumber: number }) {
   const [dagliga, setDagliga] = useState(false);
   const [mage, setMage] = useState(false);
   const [utmaning, setUtmaning] = useState(false);
+  const [extra, setExtra] = useState(false);
   const [showPepp, setShowPepp] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function Day({ daynumber }: { daynumber: number }) {
   }, [daynumber]);
 
   const getBackgroundColor = () => {
-    const activeCount = [dagliga, mage, utmaning].filter(Boolean).length;
+    const activeCount = [dagliga, mage, utmaning, extra].filter(Boolean).length;
 
     if (activeCount === 3) {
       return 'bg-pink-500';
@@ -244,6 +245,71 @@ export default function Day({ daynumber }: { daynumber: number }) {
                 </ConfettiButton>
                 <Typography variant="body2" className="text-gray-300 md:hidden">
                   Utmaning
+                </Typography>
+              </>
+            </Tooltip>
+          )}
+          {extra || disabledDay() ? (
+            <Tooltip title="Utmaning">
+              <>
+                <WorkspacePremiumIcon
+                  sx={{
+                    fontSize: { xs: '1.7rem', md: '2rem' },
+                  }}
+                  className={`${extra ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+                  onClick={
+                    disabledDay()
+                      ? undefined
+                      : () => {
+                          setExtra(!extra);
+                          extra
+                            ? localStorage.removeItem(`${daynumber}-extra`)
+                            : localStorage.setItem(
+                                `${daynumber}-extra`,
+                                'extra'
+                              );
+                        }
+                  }
+                />{' '}
+                <Typography variant="body2" className="text-gray-300 md:hidden">
+                  Extra
+                </Typography>
+              </>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Extra">
+              <>
+                <ConfettiButton
+                  variant="ghost"
+                  options={{
+                    shapes: ['star'],
+                    particleCount: 40,
+                    spread: 40,
+                    colors: ['#FFD700', '#FFA500', '#FF6347'],
+                  }}
+                >
+                  <WorkspacePremiumIcon
+                    sx={{
+                      fontSize: { xs: '1.7rem', md: '2rem' },
+                    }}
+                    className={`${extra ? 'text-pink-900 hover:text-pink-900' : 'text-gray-300 hover:text-pink-300'} ${disabledDay() ? 'text-gray-300 hover:text-gray-300 cursor-not-allowed' : 'text-gray-300'}`}
+                    onClick={
+                      disabledDay()
+                        ? undefined
+                        : () => {
+                            setExtra(!extra);
+                            extra
+                              ? localStorage.removeItem(`${daynumber}-extra`)
+                              : localStorage.setItem(
+                                  `${daynumber}-extra`,
+                                  extra ? '' : 'extra'
+                                );
+                          }
+                    }
+                  />
+                </ConfettiButton>
+                <Typography variant="body2" className="text-gray-300 md:hidden">
+                  Extra
                 </Typography>
               </>
             </Tooltip>
