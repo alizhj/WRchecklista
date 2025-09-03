@@ -22,6 +22,7 @@ export default function Day({ daynumber }: { daynumber: number }) {
     setDagliga(localStorage.getItem(`${daynumber}-dagliga`) === 'dagliga');
     setMage(localStorage.getItem(`${daynumber}-mage`) === 'mage');
     setUtmaning(localStorage.getItem(`${daynumber}-utmaning`) === 'utmaning');
+    setExtra(localStorage.getItem(`${daynumber}-extra`) === 'extra');
   }, [daynumber]);
 
   const getBackgroundColor = () => {
