@@ -127,7 +127,9 @@ export default function Vikt({ open, onClose }: ViktProps) {
     if (!isCurrentValid) return;
     try {
       const prevRaw = localStorage.getItem(CURRENT_STORAGE_KEY);
-      const prev: Partial<Metrics> | null = prevRaw ? JSON.parse(prevRaw) : null;
+      const prev: Partial<Metrics> | null = prevRaw
+        ? JSON.parse(prevRaw)
+        : null;
       localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(currentMetrics));
 
       const prevWeight = prev?.weight;
@@ -160,71 +162,32 @@ export default function Vikt({ open, onClose }: ViktProps) {
 
   return (
     <>
-    <Modal open={open} onClose={onClose} aria-labelledby="vikt-modal-title">
-      <Box sx={style}>
-        <IconButton
-          aria-label="Stäng"
-          onClick={onClose}
-          sx={{ position: 'absolute', top: 8, right: 8, color: '#600336' }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Typography
-          id="vikt-modal-title"
-          variant="h4"
-          component="h2"
-          sx={{ textAlign: 'center' }}
-        >
-          Mätningar
-        </Typography>
-
-        <Typography variant="h6" sx={{ mt: 2, textAlign: 'center' }}>
-          {phase === 'start' ? 'Spara startvärden' : 'Ange nuvarande värden'}
-        </Typography>
-
-        {phase === 'start' ? (
-          <Box
-            sx={{
-              mt: 2,
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-              gap: 2,
-            }}
+      <Modal open={open} onClose={onClose} aria-labelledby="vikt-modal-title">
+        <Box sx={style}>
+          <IconButton
+            aria-label="Stäng"
+            onClick={onClose}
+            sx={{ position: 'absolute', top: 8, right: 8, color: '#600336' }}
           >
-            {(Object.keys(labels) as (keyof Metrics)[]).map(k => (
-              <TextField
-                key={k}
-                type="number"
-                label={labels[k]}
-                inputProps={{ step: '0.1' }}
-                value={startForm[k] ?? ''}
-                onChange={e => handleStartChange(k, e.target.value)}
-                variant="outlined"
-              />
-            ))}
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            id="vikt-modal-title"
+            variant="h4"
+            component="h2"
+            sx={{ textAlign: 'center' }}
+          >
+            Mätningar
+          </Typography>
 
+          <Typography variant="h6" sx={{ mt: 2, textAlign: 'center' }}>
+            {phase === 'start' ? 'Spara startvärden' : 'Ange nuvarande värden'}
+          </Typography>
+
+          {phase === 'start' ? (
             <Box
               sx={{
-                gridColumn: { xs: 'auto', sm: '1 / -1' },
-                display: 'flex',
-                justifyContent: 'flex-end',
-                mt: 1,
-              }}
-            >
-              <Button
-                variant="contained"
-                disabled={!isStartValid}
-                onClick={saveStart}
-                sx={{ background: '#600336' }}
-              >
-                Spara startvärden
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{
+                mt: 2,
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
                 gap: 2,
@@ -236,98 +199,136 @@ export default function Vikt({ open, onClose }: ViktProps) {
                   type="number"
                   label={labels[k]}
                   inputProps={{ step: '0.1' }}
-                  value={currentMetrics[k] ?? ''}
-                  onChange={e => handleCurrentChange(k, e.target.value)}
+                  value={startForm[k] ?? ''}
+                  onChange={e => handleStartChange(k, e.target.value)}
                   variant="outlined"
                 />
               ))}
-            </Box>
 
-            {startMetrics && (
-              <Box sx={{ mt: 2 }}>
+              <Box
+                sx={{
+                  gridColumn: { xs: 'auto', sm: '1 / -1' },
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  mt: 1,
+                }}
+              >
                 <Button
-                  variant="text"
-                  onClick={() => setShowStart(v => !v)}
-                  sx={{ color: '#600336', p: 0, minWidth: 0 }}
+                  variant="contained"
+                  disabled={!isStartValid}
+                  onClick={saveStart}
+                  sx={{ background: '#600336' }}
                 >
-                  {showStart ? 'Dölj startvärden' : 'Visa startvärden'}
+                  Spara startvärden
                 </Button>
-                {showStart && (
+              </Box>
+            </Box>
+          ) : (
+            <Box sx={{ mt: 2 }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                  gap: 2,
+                }}
+              >
+                {(Object.keys(labels) as (keyof Metrics)[]).map(k => (
+                  <TextField
+                    key={k}
+                    type="number"
+                    label={labels[k]}
+                    inputProps={{ step: '0.1' }}
+                    value={currentMetrics[k] ?? ''}
+                    onChange={e => handleCurrentChange(k, e.target.value)}
+                    variant="outlined"
+                  />
+                ))}
+              </Box>
+
+              {startMetrics && (
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    variant="text"
+                    onClick={() => setShowStart(v => !v)}
+                    sx={{ color: '#600336', p: 0, minWidth: 0 }}
+                  >
+                    {showStart ? 'Dölj startvärden' : 'Visa startvärden'}
+                  </Button>
+                  {showStart && (
+                    <Box
+                      sx={{
+                        mt: 1,
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                        gap: 1,
+                      }}
+                    >
+                      <Typography>Vikt (kg): {startMetrics.weight}</Typography>
+                      <Typography>Arm (cm): {startMetrics.arm}</Typography>
+                      <Typography>Lår (cm): {startMetrics.thigh}</Typography>
+                      <Typography>Mage (cm): {startMetrics.belly}</Typography>
+                      <Typography>Midja (cm): {startMetrics.waist}</Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={saveCurrent}
+                  disabled={!isCurrentValid}
+                  sx={{ background: '#600336' }}
+                >
+                  Spara
+                </Button>
+              </Box>
+
+              <Divider sx={{ my: 2, borderColor: '#600336' }} />
+
+              {deltas ? (
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Förändring
+                  </Typography>
                   <Box
                     sx={{
-                      mt: 1,
                       display: 'grid',
                       gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
                       gap: 1,
                     }}
                   >
-                    <Typography>Vikt (kg): {startMetrics.weight}</Typography>
-                    <Typography>Arm (cm): {startMetrics.arm}</Typography>
-                    <Typography>Lår (cm): {startMetrics.thigh}</Typography>
-                    <Typography>Mage (cm): {startMetrics.belly}</Typography>
-                    <Typography>Midja (cm): {startMetrics.waist}</Typography>
+                    <Typography>
+                      Vikt: {deltas.diff.weight > 0 ? '-' : '+'}
+                      {Math.abs(deltas.diff.weight).toFixed(1)} kg
+                    </Typography>
+                    <Typography>
+                      Arm: {deltas.diff.arm > 0 ? '-' : '+'}
+                      {Math.abs(deltas.diff.arm).toFixed(1)} cm
+                    </Typography>
+                    <Typography>
+                      Lår: {deltas.diff.thigh > 0 ? '-' : '+'}
+                      {Math.abs(deltas.diff.thigh).toFixed(1)} cm
+                    </Typography>
+                    <Typography>
+                      Mage: {deltas.diff.belly > 0 ? '-' : '+'}
+                      {Math.abs(deltas.diff.belly).toFixed(1)} cm
+                    </Typography>
+                    <Typography>
+                      Midja: {deltas.diff.waist > 0 ? '-' : '+'}
+                      {Math.abs(deltas.diff.waist).toFixed(1)} cm
+                    </Typography>
                   </Box>
-                )}
-              </Box>
-            )}
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button
-                variant="contained"
-                onClick={saveCurrent}
-                disabled={!isCurrentValid}
-                sx={{ background: '#600336' }}
-              >
-                Spara
-              </Button>
-            </Box>
-
-            <Divider sx={{ my: 2, borderColor: '#600336' }} />
-
-            {deltas ? (
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                  Förändring
-                </Typography>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                    gap: 1,
-                  }}
-                >
-                  <Typography>
-                    Vikt: {deltas.diff.weight > 0 ? '-' : '+'}
-                    {Math.abs(deltas.diff.weight).toFixed(1)} kg
-                  </Typography>
-                  <Typography>
-                    Arm: {deltas.diff.arm > 0 ? '-' : '+'}
-                    {Math.abs(deltas.diff.arm).toFixed(1)} cm
-                  </Typography>
-                  <Typography>
-                    Lår: {deltas.diff.thigh > 0 ? '-' : '+'}
-                    {Math.abs(deltas.diff.thigh).toFixed(1)} cm
-                  </Typography>
-                  <Typography>
-                    Mage: {deltas.diff.belly > 0 ? '-' : '+'}
-                    {Math.abs(deltas.diff.belly).toFixed(1)} cm
-                  </Typography>
-                  <Typography>
-                    Midja: {deltas.diff.waist > 0 ? '-' : '+'}
-                    {Math.abs(deltas.diff.waist).toFixed(1)} cm
-                  </Typography>
                 </Box>
-              </Box>
-            ) : (
-              <Typography variant="body1" sx={{ color: '#333' }}>
-                Fyll i alla nuvarande värden för att se förändringarna.
-              </Typography>
-            )}
-          </Box>
-        )}
-      </Box>
-    </Modal>
-    
+              ) : (
+                <Typography variant="body1" sx={{ color: '#333' }}>
+                  Fyll i alla nuvarande värden för att se förändringarna.
+                </Typography>
+              )}
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </>
   );
 }
