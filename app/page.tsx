@@ -7,12 +7,15 @@ import Start from '@/components/start';
 import { useEffect, useState } from 'react';
 import StartOver from '@/components/ui/startover';
 import RestoreIcon from '@mui/icons-material/Restore';
+import BalanceIcon from '@mui/icons-material/Balance';
 import dayjs from 'dayjs';
+import Vikt from '@/components/vikt';
 
 export default function Home() {
   const [started, setStarted] = useState(false);
   const [startOver, setStartOver] = useState(false);
   const [programDays, setProgramDays] = useState(66); // Default fallback
+  const [openVikt, setOpenVikt] = useState(false);
 
   const getProgramDays = () => {
     const savedProgram = localStorage.getItem('program');
@@ -108,30 +111,49 @@ export default function Home() {
 
   return (
     <main className="h-screen flex flex-col md:items-center pt-4 pb-4 text-pink-900 bg-pink-200">
-      <Button
-        variant="contained"
-        sx={{
-          position: 'absolute',
-          top: { xs: 0, md: 10 },
-          right: 10,
-          background: '#600336',
-          borderRadius: '50px',
-          mt: 2,
-          cursor: 'pointer',
-          color: '#fff',
-          p: { md: 1 },
-          '& .button-text': {
-            display: { xs: 'none', md: 'inline' },
-          },
-        }}
-        onClick={() => {
-          setStartOver(true);
-        }}
-      >
-        <RestoreIcon /> <span className="button-text">Börja om</span>
-      </Button>
-      <Box className="flex flex-col md:items-center text-4xl mb-1 md:mb-6 mr-2 ml-4 md:ml-0 flex-shrink-0">
-        <h1 className="text-md md:text-8xl md:mt-0 font-bold">Weekly Revolt</h1>
+      <Box sx={{ position: 'absolute', top: { xs: 0, md: 10 }, right: 10, display: 'flex', gap: 1, mt: 2 }}>
+        <Button
+          variant="contained"
+          sx={{
+            background: '#600336',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            color: '#fff',
+            p: { md: 1 },
+            '& .button-text': {
+              display: { xs: 'none', md: 'inline' },
+            },
+          }}
+          onClick={() => {
+            setOpenVikt(true);
+          }}
+        >
+          <BalanceIcon /> <span className="button-text">Vikt</span>
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            background: '#600336',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            color: '#fff',
+            p: { md: 1 },
+            '& .button-text': {
+              display: { xs: 'none', md: 'inline' },
+            },
+          }}
+          onClick={() => {
+            setStartOver(true);
+          }}
+        >
+          <RestoreIcon /> <span className="button-text">Börja om</span>
+        </Button>
+      </Box>
+      <Box className="flex flex-col self-start items-start text-4xl mb-1 md:mb-6 mr-2 ml-4 md:ml-0 flex-shrink-0">
+        <h1 className="md:mt-0 md:ml-8 font-bold">
+          <span className="md:hidden text-3xl">Weekly Revolt</span>
+          <span className="hidden md:inline text-6xl">Weekly Revolt</span>
+        </h1>
       </Box>
       {started && (
         <Box
@@ -154,6 +176,12 @@ export default function Home() {
           setStartOver(false);
         }}
         show={startOver}
+      />
+      <Vikt
+        open={openVikt}
+        onClose={() => {
+          setOpenVikt(false);
+        }}
       />
     </main>
   );
