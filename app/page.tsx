@@ -86,6 +86,7 @@ export default function Home() {
     if (hasStarted) {
       scrollToCurrentDay();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Lyssna på localStorage ändringar för att uppdatera när program ändras
@@ -111,7 +112,16 @@ export default function Home() {
 
   return (
     <main className="h-screen flex flex-col md:items-center pt-4 pb-4 text-pink-900 bg-pink-200">
-      <Box sx={{ position: 'absolute', top: { xs: 0, md: 10 }, right: 10, display: 'flex', gap: 1, mt: 2 }}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: { xs: 0, md: 10 },
+          right: 10,
+          display: 'flex',
+          gap: 1,
+          mt: 2,
+        }}
+      >
         <Button
           variant="contained"
           sx={{

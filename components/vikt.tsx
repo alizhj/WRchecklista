@@ -108,11 +108,11 @@ export default function Vikt({ open, onClose }: ViktProps) {
   }, [currentMetrics]);
 
   const handleStartChange = (key: keyof Metrics, value: string) => {
-    setStartForm((prev) => ({ ...prev, [key]: parseFloat(value) }));
+    setStartForm(prev => ({ ...prev, [key]: parseFloat(value) }));
   };
 
   const handleCurrentChange = (key: keyof Metrics, value: string) => {
-    setCurrentMetrics((prev) => ({ ...prev, [key]: parseFloat(value) }));
+    setCurrentMetrics(prev => ({ ...prev, [key]: parseFloat(value) }));
   };
 
   const saveCurrent = () => {
@@ -154,7 +154,12 @@ export default function Vikt({ open, onClose }: ViktProps) {
         >
           <CloseIcon />
         </IconButton>
-        <Typography id="vikt-modal-title" variant="h4" component="h2" sx={{ textAlign: 'center' }}>
+        <Typography
+          id="vikt-modal-title"
+          variant="h4"
+          component="h2"
+          sx={{ textAlign: 'center' }}
+        >
           Mätningar
         </Typography>
 
@@ -163,20 +168,34 @@ export default function Vikt({ open, onClose }: ViktProps) {
         </Typography>
 
         {phase === 'start' ? (
-          <Box sx={{ mt: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-            {(Object.keys(labels) as (keyof Metrics)[]).map((k) => (
+          <Box
+            sx={{
+              mt: 2,
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+              gap: 2,
+            }}
+          >
+            {(Object.keys(labels) as (keyof Metrics)[]).map(k => (
               <TextField
                 key={k}
                 type="number"
                 label={labels[k]}
                 inputProps={{ step: '0.1' }}
                 value={startForm[k] ?? ''}
-                onChange={(e) => handleStartChange(k, e.target.value)}
+                onChange={e => handleStartChange(k, e.target.value)}
                 variant="outlined"
               />
             ))}
 
-            <Box sx={{ gridColumn: { xs: 'auto', sm: '1 / -1' }, display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+            <Box
+              sx={{
+                gridColumn: { xs: 'auto', sm: '1 / -1' },
+                display: 'flex',
+                justifyContent: 'flex-end',
+                mt: 1,
+              }}
+            >
               <Button
                 variant="contained"
                 disabled={!isStartValid}
@@ -189,15 +208,21 @@ export default function Vikt({ open, onClose }: ViktProps) {
           </Box>
         ) : (
           <Box sx={{ mt: 2 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-              {(Object.keys(labels) as (keyof Metrics)[]).map((k) => (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                gap: 2,
+              }}
+            >
+              {(Object.keys(labels) as (keyof Metrics)[]).map(k => (
                 <TextField
                   key={k}
                   type="number"
                   label={labels[k]}
                   inputProps={{ step: '0.1' }}
                   value={currentMetrics[k] ?? ''}
-                  onChange={(e) => handleCurrentChange(k, e.target.value)}
+                  onChange={e => handleCurrentChange(k, e.target.value)}
                   variant="outlined"
                 />
               ))}
@@ -207,13 +232,20 @@ export default function Vikt({ open, onClose }: ViktProps) {
               <Box sx={{ mt: 2 }}>
                 <Button
                   variant="text"
-                  onClick={() => setShowStart((v) => !v)}
+                  onClick={() => setShowStart(v => !v)}
                   sx={{ color: '#600336', p: 0, minWidth: 0 }}
                 >
                   {showStart ? 'Dölj startvärden' : 'Visa startvärden'}
                 </Button>
                 {showStart && (
-                  <Box sx={{ mt: 1, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1 }}>
+                  <Box
+                    sx={{
+                      mt: 1,
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                      gap: 1,
+                    }}
+                  >
                     <Typography>Vikt (kg): {startMetrics.weight}</Typography>
                     <Typography>Arm (cm): {startMetrics.arm}</Typography>
                     <Typography>Lår (cm): {startMetrics.thigh}</Typography>
@@ -225,7 +257,12 @@ export default function Vikt({ open, onClose }: ViktProps) {
             )}
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button variant="contained" onClick={saveCurrent} disabled={!isCurrentValid} sx={{ background: '#600336' }}>
+              <Button
+                variant="contained"
+                onClick={saveCurrent}
+                disabled={!isCurrentValid}
+                sx={{ background: '#600336' }}
+              >
                 Spara
               </Button>
             </Box>
@@ -237,7 +274,13 @@ export default function Vikt({ open, onClose }: ViktProps) {
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                   Förändring
                 </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1 }}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: 1,
+                  }}
+                >
                   <Typography>
                     Vikt: {deltas.diff.weight > 0 ? '-' : '+'}
                     {Math.abs(deltas.diff.weight).toFixed(1)} kg
@@ -259,7 +302,6 @@ export default function Vikt({ open, onClose }: ViktProps) {
                     {Math.abs(deltas.diff.waist).toFixed(1)} cm
                   </Typography>
                 </Box>
-        
               </Box>
             ) : (
               <Typography variant="body1" sx={{ color: '#333' }}>
@@ -272,5 +314,3 @@ export default function Vikt({ open, onClose }: ViktProps) {
     </Modal>
   );
 }
-
-
