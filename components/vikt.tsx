@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -11,6 +11,8 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+// Confetti removed per request
+// Snackbar removed per request
 
 type Metrics = {
   weight: number;
@@ -33,6 +35,8 @@ export default function Vikt({ open, onClose }: ViktProps) {
   const [currentMetrics, setCurrentMetrics] = useState<Partial<Metrics>>({});
   const [phase, setPhase] = useState<'start' | 'current'>('start');
   const [showStart, setShowStart] = useState(false);
+  // Snackbar removed per request
+  // Confetti removed per request
 
   useEffect(() => {
     if (!open) return;
@@ -70,12 +74,16 @@ export default function Vikt({ open, onClose }: ViktProps) {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: 320, md: 520 },
+    maxHeight: '90vh',
+    overflowY: 'auto',
     bgcolor: '#ffbde1',
     border: '2px solid #600336',
     borderRadius: '16px',
     boxShadow: 24,
     p: 4,
   };
+
+  // No manual sizing needed; Confetti component resizes itself
 
   const labels: Record<keyof Metrics, string> = {
     weight: 'Vikt (kg)',
@@ -118,7 +126,13 @@ export default function Vikt({ open, onClose }: ViktProps) {
   const saveCurrent = () => {
     if (!isCurrentValid) return;
     try {
+      const prevRaw = localStorage.getItem(CURRENT_STORAGE_KEY);
+      const prev: Partial<Metrics> | null = prevRaw ? JSON.parse(prevRaw) : null;
       localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(currentMetrics));
+
+      const prevWeight = prev?.weight;
+      const newWeight = currentMetrics.weight;
+      // Removed toast; no UI side-effect on weight decrease
     } catch {}
   };
 
@@ -145,6 +159,7 @@ export default function Vikt({ open, onClose }: ViktProps) {
   }, [startMetrics, currentMetrics, isCurrentValid]);
 
   return (
+    <>
     <Modal open={open} onClose={onClose} aria-labelledby="vikt-modal-title">
       <Box sx={style}>
         <IconButton
@@ -312,5 +327,7 @@ export default function Vikt({ open, onClose }: ViktProps) {
         )}
       </Box>
     </Modal>
+    
+    </>
   );
 }

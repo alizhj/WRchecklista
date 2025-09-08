@@ -161,7 +161,7 @@ export default function Home() {
       </Box>
       <Box className="flex flex-col self-start items-start text-4xl mb-1 md:mb-6 mr-2 ml-4 md:ml-0 flex-shrink-0">
         <h1 className="md:mt-0 md:ml-8 font-bold">
-          <span className="md:hidden text-3xl">Weekly Revolt</span>
+          <span className="md:hidden text-2xl">Weekly Revolt</span>
           <span className="hidden md:inline text-6xl">Weekly Revolt</span>
         </h1>
       </Box>
