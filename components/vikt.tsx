@@ -76,7 +76,9 @@ export default function Vikt({ open, onClose }: ViktProps) {
 
     if (storedHistory) {
       try {
-        const parsedHistory = JSON.parse(storedHistory) as MetricsHistoryEntry[];
+        const parsedHistory = JSON.parse(
+          storedHistory
+        ) as MetricsHistoryEntry[];
         setHistory(Array.isArray(parsedHistory) ? parsedHistory : []);
       } catch {
         setHistory([]);
@@ -205,6 +207,7 @@ export default function Vikt({ open, onClose }: ViktProps) {
     width?: number;
     height?: number;
   }) => {
+    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
     if (!entries || entries.length === 0) return null;
     const data = entries.map(e => e.data.weight);
     const min = Math.min(...data);
@@ -222,19 +225,20 @@ export default function Vikt({ open, onClose }: ViktProps) {
     const xFor = (i: number) => margin.left + i * stepX;
     const yFor = (v: number) => margin.top + h - ((v - yMin) / range) * h;
 
-    const linePoints = data
-      .map((v, i) => `${xFor(i)},${yFor(v)}`)
-      .join(' ');
+    const linePoints = data.map((v, i) => `${xFor(i)},${yFor(v)}`).join(' ');
 
     const areaPoints = `${margin.left},${margin.top + h} ${linePoints} ${margin.left + w},${margin.top + h}`;
 
     const gridLines = 4;
-    const yTicks: number[] = Array.from({ length: gridLines + 1 }, (_, i) => yMin + (range * i) / gridLines);
-
-    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const yTicks: number[] = Array.from(
+      { length: gridLines + 1 },
+      (_, i) => yMin + (range * i) / gridLines
+    );
 
     const handleMove = (e: React.MouseEvent<SVGSVGElement>) => {
-      const rect = (e.target as SVGElement).closest('svg')?.getBoundingClientRect();
+      const rect = (e.target as SVGElement)
+        .closest('svg')
+        ?.getBoundingClientRect();
       if (!rect) return;
       const x = e.clientX - rect.left - margin.left;
       const i = Math.round(x / stepX);
@@ -244,7 +248,9 @@ export default function Vikt({ open, onClose }: ViktProps) {
     const handleLeave = () => setHoverIndex(null);
 
     const firstDate = new Date(entries[0].date).toLocaleDateString();
-    const lastDate = new Date(entries[entries.length - 1].date).toLocaleDateString();
+    const lastDate = new Date(
+      entries[entries.length - 1].date
+    ).toLocaleDateString();
 
     return (
       <svg
@@ -253,7 +259,11 @@ export default function Vikt({ open, onClose }: ViktProps) {
         viewBox={`0 0 ${width} ${height}`}
         onMouseMove={handleMove}
         onMouseLeave={handleLeave}
-        style={{ background: '#fff7fb', borderRadius: 8, border: '1px solid #60033633' }}
+        style={{
+          background: '#fff7fb',
+          borderRadius: 8,
+          border: '1px solid #60033633',
+        }}
       >
         <defs>
           <linearGradient id="weightArea" x1="0" y1="0" x2="0" y2="1">
@@ -288,19 +298,40 @@ export default function Vikt({ open, onClose }: ViktProps) {
           );
         })}
 
-        <polyline points={`${margin.left},${margin.top + h} ${margin.left + w},${margin.top + h}`} stroke="#60033666" strokeWidth="1" />
+        <polyline
+          points={`${margin.left},${margin.top + h} ${margin.left + w},${margin.top + h}`}
+          stroke="#60033666"
+          strokeWidth="1"
+        />
 
         <polygon points={areaPoints} fill="url(#weightArea)" />
-        <polyline points={linePoints} fill="none" stroke="#600336" strokeWidth="2.5" />
+        <polyline
+          points={linePoints}
+          fill="none"
+          stroke="#600336"
+          strokeWidth="2.5"
+        />
 
         {data.map((v, i) => (
-          <circle key={i} cx={xFor(i)} cy={yFor(v)} r={3} fill={i === hoverIndex ? '#ff2e8b' : '#600336'} />
+          <circle
+            key={i}
+            cx={xFor(i)}
+            cy={yFor(v)}
+            r={3}
+            fill={i === hoverIndex ? '#ff2e8b' : '#600336'}
+          />
         ))}
 
         <text x={margin.left} y={height - 8} fontSize="10" fill="#600336aa">
           {firstDate}
         </text>
-        <text x={margin.left + w} y={height - 8} fontSize="10" textAnchor="end" fill="#600336aa">
+        <text
+          x={margin.left + w}
+          y={height - 8}
+          fontSize="10"
+          textAnchor="end"
+          fill="#600336aa"
+        >
           {lastDate}
         </text>
 
@@ -470,19 +501,19 @@ export default function Vikt({ open, onClose }: ViktProps) {
 
               <Divider sx={{ my: 2, borderColor: '#600336' }} />
               <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Senaste invägning
-                  </Typography>
+                Senaste invägning
+              </Typography>
               {lastDelta !== null ? (
-                    <Typography sx={{ mb: 1 }}>
-                      Förändring sedan förra invägning: {lastDelta > 0 ? '+' : ''}
-                      {lastDelta.toFixed(1)} kg
-                    </Typography>
-                  ) : (
-                    <Typography sx={{ mb: 1 }}>
-                      Lägg till minst två invägningar för att se förändring sedan
-                      förra.
-                    </Typography>
-                  )}
+                <Typography sx={{ mb: 1 }}>
+                  Förändring sedan förra invägning: {lastDelta > 0 ? '+' : ''}
+                  {lastDelta.toFixed(1)} kg
+                </Typography>
+              ) : (
+                <Typography sx={{ mb: 1 }}>
+                  Lägg till minst två invägningar för att se förändring sedan
+                  förra.
+                </Typography>
+              )}
               {deltas ? (
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -517,11 +548,12 @@ export default function Vikt({ open, onClose }: ViktProps) {
                     </Typography>
                   </Box>
                   <Divider sx={{ my: 2, borderColor: '#600336' }} />
-          
-                  
                   {weights.length > 0 && (
                     <Box sx={{ mt: 1 }}>
-                      <Typography variant="body2" sx={{ color: '#333', mb: 0.5 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: '#333', mb: 0.5 }}
+                      >
                         Vikt över tid
                       </Typography>
                       <WeightChart entries={history} />
