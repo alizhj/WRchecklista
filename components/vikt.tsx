@@ -208,6 +208,27 @@ export default function Vikt({ open, onClose }: ViktProps) {
     height?: number;
   }) => {
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [containerWidth, setContainerWidth] = useState<number>(width);
+
+    useEffect(() => {
+      const node = containerRef.current;
+      if (!node) return;
+      const ro = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const cw = entry.contentRect.width;
+          if (cw > 0) setContainerWidth(cw);
+        }
+      });
+      ro.observe(node);
+      // Initialize immediately
+      const rect = node.getBoundingClientRect();
+      if (rect.width > 0) setContainerWidth(rect.width);
+      return () => {
+        ro.disconnect();
+      };
+    }, []);
+
     if (!entries || entries.length === 0) return null;
     const data = entries.map(e => e.data.weight);
     const min = Math.min(...data);
@@ -218,8 +239,10 @@ export default function Vikt({ open, onClose }: ViktProps) {
     const range = yMax - yMin || 1;
 
     const margin = { top: 10, right: 12, bottom: 28, left: 36 };
-    const w = width - margin.left - margin.right;
-    const h = height - margin.top - margin.bottom;
+    const svgWidth = Math.max(260, Math.floor(containerWidth));
+    const svgHeight = containerWidth < 360 ? 140 : height;
+    const w = svgWidth - margin.left - margin.right;
+    const h = svgHeight - margin.top - margin.bottom;
     const stepX = data.length > 1 ? w / (data.length - 1) : w;
 
     const xFor = (i: number) => margin.left + i * stepX;
@@ -253,18 +276,21 @@ export default function Vikt({ open, onClose }: ViktProps) {
     ).toLocaleDateString();
 
     return (
-      <svg
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-        onMouseMove={handleMove}
-        onMouseLeave={handleLeave}
-        style={{
-          background: '#fff7fb',
-          borderRadius: 8,
-          border: '1px solid #60033633',
-        }}
-      >
+      <div ref={containerRef} style={{ width: '100%' }}>
+        <svg
+          width="100%"
+          height={svgHeight}
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          preserveAspectRatio="none"
+          onMouseMove={handleMove}
+          onMouseLeave={handleLeave}
+          style={{
+            background: '#fff7fb',
+            borderRadius: 8,
+            border: '1px solid #60033633',
+            display: 'block',
+          }}
+        >
         <defs>
           <linearGradient id="weightArea" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#600336" stopOpacity="0.25" />
@@ -371,7 +397,8 @@ export default function Vikt({ open, onClose }: ViktProps) {
             </text>
           </g>
         )}
-      </svg>
+        </svg>
+      </div>
     );
   };
 
