@@ -21,6 +21,10 @@ type Metrics = {
   belly: number;
   waist: number;
 };
+type MetricsHistoryEntry = {
+  date: string;
+  data: Metrics;
+};
 
 type ViktProps = {
   open: boolean;
@@ -29,12 +33,14 @@ type ViktProps = {
 
 const STORAGE_KEY = 'startMetrics';
 const CURRENT_STORAGE_KEY = 'currentMetrics';
+const HISTORY_STORAGE_KEY = 'metricsHistory';
 
 export default function Vikt({ open, onClose }: ViktProps) {
   const [startMetrics, setStartMetrics] = useState<Metrics | null>(null);
   const [currentMetrics, setCurrentMetrics] = useState<Partial<Metrics>>({});
   const [phase, setPhase] = useState<'start' | 'current'>('start');
   const [showStart, setShowStart] = useState(false);
+  const [history, setHistory] = useState<MetricsHistoryEntry[]>([]);
   // Snackbar removed per request
   // Confetti removed per request
 
@@ -42,6 +48,7 @@ export default function Vikt({ open, onClose }: ViktProps) {
     if (!open) return;
     const stored = localStorage.getItem(STORAGE_KEY);
     const storedCurrent = localStorage.getItem(CURRENT_STORAGE_KEY);
+    const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as Metrics;
@@ -65,6 +72,17 @@ export default function Vikt({ open, onClose }: ViktProps) {
       }
     } else {
       setCurrentMetrics({});
+    }
+
+    if (storedHistory) {
+      try {
+        const parsedHistory = JSON.parse(storedHistory) as MetricsHistoryEntry[];
+        setHistory(Array.isArray(parsedHistory) ? parsedHistory : []);
+      } catch {
+        setHistory([]);
+      }
+    } else {
+      setHistory([]);
     }
   }, [open]);
 
@@ -135,6 +153,14 @@ export default function Vikt({ open, onClose }: ViktProps) {
       const prevWeight = prev?.weight;
       const newWeight = currentMetrics.weight;
       // Removed toast; no UI side-effect on weight decrease
+      // Append full entry to history
+      const entry: MetricsHistoryEntry = {
+        date: new Date().toISOString(),
+        data: currentMetrics as Metrics,
+      };
+      const nextHistory = [...history, entry];
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(nextHistory));
+      setHistory(nextHistory);
     } catch {}
   };
 
@@ -159,6 +185,164 @@ export default function Vikt({ open, onClose }: ViktProps) {
 
     return { diff };
   }, [startMetrics, currentMetrics, isCurrentValid]);
+
+  const lastDelta = useMemo(() => {
+    if (!history || history.length < 2) return null;
+    const prev = history[history.length - 2];
+    const last = history[history.length - 1];
+    const dw = last.data.weight - prev.data.weight; // positive means up
+    return dw;
+  }, [history]);
+
+  const weights = useMemo(() => history.map(h => h.data.weight), [history]);
+
+  const WeightChart = ({
+    entries,
+    width = 360,
+    height = 160,
+  }: {
+    entries: MetricsHistoryEntry[];
+    width?: number;
+    height?: number;
+  }) => {
+    if (!entries || entries.length === 0) return null;
+    const data = entries.map(e => e.data.weight);
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const paddingY = (max - min) * 0.1 || 1;
+    const yMin = min - paddingY;
+    const yMax = max + paddingY;
+    const range = yMax - yMin || 1;
+
+    const margin = { top: 10, right: 12, bottom: 28, left: 36 };
+    const w = width - margin.left - margin.right;
+    const h = height - margin.top - margin.bottom;
+    const stepX = data.length > 1 ? w / (data.length - 1) : w;
+
+    const xFor = (i: number) => margin.left + i * stepX;
+    const yFor = (v: number) => margin.top + h - ((v - yMin) / range) * h;
+
+    const linePoints = data
+      .map((v, i) => `${xFor(i)},${yFor(v)}`)
+      .join(' ');
+
+    const areaPoints = `${margin.left},${margin.top + h} ${linePoints} ${margin.left + w},${margin.top + h}`;
+
+    const gridLines = 4;
+    const yTicks: number[] = Array.from({ length: gridLines + 1 }, (_, i) => yMin + (range * i) / gridLines);
+
+    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
+    const handleMove = (e: React.MouseEvent<SVGSVGElement>) => {
+      const rect = (e.target as SVGElement).closest('svg')?.getBoundingClientRect();
+      if (!rect) return;
+      const x = e.clientX - rect.left - margin.left;
+      const i = Math.round(x / stepX);
+      if (i >= 0 && i < data.length) setHoverIndex(i);
+    };
+
+    const handleLeave = () => setHoverIndex(null);
+
+    const firstDate = new Date(entries[0].date).toLocaleDateString();
+    const lastDate = new Date(entries[entries.length - 1].date).toLocaleDateString();
+
+    return (
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+        onMouseMove={handleMove}
+        onMouseLeave={handleLeave}
+        style={{ background: '#fff7fb', borderRadius: 8, border: '1px solid #60033633' }}
+      >
+        <defs>
+          <linearGradient id="weightArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#600336" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#600336" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {yTicks.map((yt, idx) => {
+          const y = yFor(yt);
+          return (
+            <g key={idx}>
+              <line
+                x1={margin.left}
+                y1={y}
+                x2={margin.left + w}
+                y2={y}
+                stroke="#60033622"
+                strokeDasharray="4 4"
+              />
+              <text
+                x={margin.left - 8}
+                y={y}
+                textAnchor="end"
+                dominantBaseline="middle"
+                fontSize="10"
+                fill="#600336"
+              >
+                {yt.toFixed(1)}
+              </text>
+            </g>
+          );
+        })}
+
+        <polyline points={`${margin.left},${margin.top + h} ${margin.left + w},${margin.top + h}`} stroke="#60033666" strokeWidth="1" />
+
+        <polygon points={areaPoints} fill="url(#weightArea)" />
+        <polyline points={linePoints} fill="none" stroke="#600336" strokeWidth="2.5" />
+
+        {data.map((v, i) => (
+          <circle key={i} cx={xFor(i)} cy={yFor(v)} r={3} fill={i === hoverIndex ? '#ff2e8b' : '#600336'} />
+        ))}
+
+        <text x={margin.left} y={height - 8} fontSize="10" fill="#600336aa">
+          {firstDate}
+        </text>
+        <text x={margin.left + w} y={height - 8} fontSize="10" textAnchor="end" fill="#600336aa">
+          {lastDate}
+        </text>
+
+        {hoverIndex !== null && (
+          <g>
+            <line
+              x1={xFor(hoverIndex)}
+              y1={margin.top}
+              x2={xFor(hoverIndex)}
+              y2={margin.top + h}
+              stroke="#ff2e8b66"
+            />
+            <rect
+              x={Math.min(xFor(hoverIndex) + 8, margin.left + w - 90)}
+              y={margin.top + 8}
+              width={90}
+              height={36}
+              rx={6}
+              ry={6}
+              fill="#600336"
+            />
+            <text
+              x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
+              y={margin.top + 22}
+              fontSize="11"
+              fill="#ffffff"
+            >
+              {new Date(entries[hoverIndex].date).toLocaleDateString()}
+            </text>
+            <text
+              x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
+              y={margin.top + 34}
+              fontSize="11"
+              fill="#ffffff"
+            >
+              {data[hoverIndex].toFixed(1)} kg
+            </text>
+          </g>
+        )}
+      </svg>
+    );
+  };
 
   return (
     <>
@@ -285,7 +469,20 @@ export default function Vikt({ open, onClose }: ViktProps) {
               </Box>
 
               <Divider sx={{ my: 2, borderColor: '#600336' }} />
-
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    Senaste invägning
+                  </Typography>
+              {lastDelta !== null ? (
+                    <Typography sx={{ mb: 1 }}>
+                      Förändring sedan förra invägning: {lastDelta > 0 ? '+' : ''}
+                      {lastDelta.toFixed(1)} kg
+                    </Typography>
+                  ) : (
+                    <Typography sx={{ mb: 1 }}>
+                      Lägg till minst två invägningar för att se förändring sedan
+                      förra.
+                    </Typography>
+                  )}
               {deltas ? (
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -319,6 +516,17 @@ export default function Vikt({ open, onClose }: ViktProps) {
                       {Math.abs(deltas.diff.waist).toFixed(1)} cm
                     </Typography>
                   </Box>
+                  <Divider sx={{ my: 2, borderColor: '#600336' }} />
+          
+                  
+                  {weights.length > 0 && (
+                    <Box sx={{ mt: 1 }}>
+                      <Typography variant="body2" sx={{ color: '#333', mb: 0.5 }}>
+                        Vikt över tid
+                      </Typography>
+                      <WeightChart entries={history} />
+                    </Box>
+                  )}
                 </Box>
               ) : (
                 <Typography variant="body1" sx={{ color: '#333' }}>
