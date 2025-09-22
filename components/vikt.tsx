@@ -291,112 +291,112 @@ export default function Vikt({ open, onClose }: ViktProps) {
             display: 'block',
           }}
         >
-        <defs>
-          <linearGradient id="weightArea" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#600336" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#600336" stopOpacity="0" />
-          </linearGradient>
-        </defs>
+          <defs>
+            <linearGradient id="weightArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#600336" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#600336" stopOpacity="0" />
+            </linearGradient>
+          </defs>
 
-        {yTicks.map((yt, idx) => {
-          const y = yFor(yt);
-          return (
-            <g key={idx}>
+          {yTicks.map((yt, idx) => {
+            const y = yFor(yt);
+            return (
+              <g key={idx}>
+                <line
+                  x1={margin.left}
+                  y1={y}
+                  x2={margin.left + w}
+                  y2={y}
+                  stroke="#60033622"
+                  strokeDasharray="4 4"
+                />
+                <text
+                  x={margin.left - 8}
+                  y={y}
+                  textAnchor="end"
+                  dominantBaseline="middle"
+                  fontSize="10"
+                  fill="#600336"
+                >
+                  {yt.toFixed(1)}
+                </text>
+              </g>
+            );
+          })}
+
+          <polyline
+            points={`${margin.left},${margin.top + h} ${margin.left + w},${margin.top + h}`}
+            stroke="#60033666"
+            strokeWidth="1"
+          />
+
+          <polygon points={areaPoints} fill="url(#weightArea)" />
+          <polyline
+            points={linePoints}
+            fill="none"
+            stroke="#600336"
+            strokeWidth="2.5"
+          />
+
+          {data.map((v, i) => (
+            <circle
+              key={i}
+              cx={xFor(i)}
+              cy={yFor(v)}
+              r={3}
+              fill={i === hoverIndex ? '#ff2e8b' : '#600336'}
+            />
+          ))}
+
+          <text x={margin.left} y={height - 8} fontSize="10" fill="#600336aa">
+            {firstDate}
+          </text>
+          <text
+            x={margin.left + w}
+            y={height - 8}
+            fontSize="10"
+            textAnchor="end"
+            fill="#600336aa"
+          >
+            {lastDate}
+          </text>
+
+          {hoverIndex !== null && (
+            <g>
               <line
-                x1={margin.left}
-                y1={y}
-                x2={margin.left + w}
-                y2={y}
-                stroke="#60033622"
-                strokeDasharray="4 4"
+                x1={xFor(hoverIndex)}
+                y1={margin.top}
+                x2={xFor(hoverIndex)}
+                y2={margin.top + h}
+                stroke="#ff2e8b66"
+              />
+              <rect
+                x={Math.min(xFor(hoverIndex) + 8, margin.left + w - 90)}
+                y={margin.top + 8}
+                width={90}
+                height={36}
+                rx={6}
+                ry={6}
+                fill="#600336"
               />
               <text
-                x={margin.left - 8}
-                y={y}
-                textAnchor="end"
-                dominantBaseline="middle"
-                fontSize="10"
-                fill="#600336"
+                x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
+                y={margin.top + 22}
+                fontSize="11"
+                fill="#ffffff"
               >
-                {yt.toFixed(1)}
+                {new Date(entries[hoverIndex].date).toLocaleDateString()}
+              </text>
+              <text
+                x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
+                y={margin.top + 34}
+                fontSize="11"
+                fill="#ffffff"
+              >
+                {data[hoverIndex].toFixed(1)} kg
               </text>
             </g>
-          );
-        })}
-
-        <polyline
-          points={`${margin.left},${margin.top + h} ${margin.left + w},${margin.top + h}`}
-          stroke="#60033666"
-          strokeWidth="1"
-        />
-
-        <polygon points={areaPoints} fill="url(#weightArea)" />
-        <polyline
-          points={linePoints}
-          fill="none"
-          stroke="#600336"
-          strokeWidth="2.5"
-        />
-
-        {data.map((v, i) => (
-          <circle
-            key={i}
-            cx={xFor(i)}
-            cy={yFor(v)}
-            r={3}
-            fill={i === hoverIndex ? '#ff2e8b' : '#600336'}
-          />
-        ))}
-
-        <text x={margin.left} y={height - 8} fontSize="10" fill="#600336aa">
-          {firstDate}
-        </text>
-        <text
-          x={margin.left + w}
-          y={height - 8}
-          fontSize="10"
-          textAnchor="end"
-          fill="#600336aa"
-        >
-          {lastDate}
-        </text>
-
-        {hoverIndex !== null && (
-          <g>
-            <line
-              x1={xFor(hoverIndex)}
-              y1={margin.top}
-              x2={xFor(hoverIndex)}
-              y2={margin.top + h}
-              stroke="#ff2e8b66"
-            />
-            <rect
-              x={Math.min(xFor(hoverIndex) + 8, margin.left + w - 90)}
-              y={margin.top + 8}
-              width={90}
-              height={36}
-              rx={6}
-              ry={6}
-              fill="#600336"
-            />
-            <text
-              x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
-              y={margin.top + 22}
-              fontSize="11"
-              fill="#ffffff"
-            >
-              {new Date(entries[hoverIndex].date).toLocaleDateString()}
-            </text>
-            <text
-              x={Math.min(xFor(hoverIndex) + 14, margin.left + w - 84)}
-              y={margin.top + 34}
-              fontSize="11"
-              fill="#ffffff"
-            >
-              {data[hoverIndex].toFixed(1)} kg
-            </text>
-          </g>
-        )}
+          )}
         </svg>
       </div>
     );
